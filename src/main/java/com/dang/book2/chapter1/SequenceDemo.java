@@ -8,8 +8,9 @@ public class SequenceDemo {
     public static void main(String[] args) {
 
         SequenceDemo demo = new SequenceDemo();
-        demo.unSafeTest();
-        //demo.safeTest();
+
+        //demo.unSafeTest();
+        demo.safeTest();
 
     }
 
