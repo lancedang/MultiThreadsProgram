@@ -4,7 +4,16 @@ package com.dang.book2.chapter1;
  * Created by Dangdang on 2018/7/16.
  */
 public class SequenceDemo {
+
     public static void main(String[] args) {
+
+        SequenceDemo demo = new SequenceDemo();
+        demo.unSafeTest();
+        //demo.safeTest();
+
+    }
+
+    public void unSafeTest() {
         //线程共享变量
         final UnsafeSequence sequence = new UnsafeSequence();
 
@@ -23,7 +32,7 @@ public class SequenceDemo {
         Runnable target = () -> {
             for (int i = 0; i < 50; i++) {
                 int next = sequence.getNext();
-                System.out.println(Thread.currentThread().getName() + ":" +next);
+                System.out.println(Thread.currentThread().getName() + ":" + next);
             }
         };
 
@@ -32,4 +41,21 @@ public class SequenceDemo {
         thread1.start();
         thread2.start();
     }
+
+    public void safeTest() {
+        SafeSequence safeSequence = new SafeSequence();
+
+        Runnable target2 = () -> {
+            for (int i = 0; i < 50; i++) {
+                int next = safeSequence.getNext();
+                System.out.println(Thread.currentThread().getName() + ":" + next);
+            }
+        };
+
+        Thread thread1 = new Thread(target2);
+        Thread thread2 = new Thread(target2);
+        thread1.start();
+        thread2.start();
+    }
+
 }
