@@ -37,6 +37,12 @@ public class UnsafeCachingFactorizer implements Servlet {
             factors = lastFactorors.get();
         }else{
             factors = factor(number);
+            //当所要分解值与上次不同时，重新计算并保存结果，
+            // 保存的单个动作如保存number，保存数组都是原子的，但两个原子操作在多线程环境下是可以被分隔的
+            // 但逻辑上需要满足15=3*5，不能15保存好了，但3和5没有保存或保存成其他值
+            //这种同时保存的多个条件具有某种关联，称为"不变性条件",本质是"复合操作的增强版"
+            //除了多个操作需要原子进行外，还要满足多个操作间的不变性
+            //结论：要保证状态一致性需要在某个原子操作中更新所有相关的状态变量
             lastNumber.set(number);
             lastFactorors.set(factors);
         }
