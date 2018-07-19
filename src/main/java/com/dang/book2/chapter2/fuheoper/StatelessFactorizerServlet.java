@@ -1,21 +1,18 @@
-package com.dang.book2.chapter2;
+package com.dang.book2.chapter2.fuheoper;
 
 import javax.servlet.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * UnsafeCountingFactorizer 中的计数过程要想正确是需要 read->n+1->write 这3个步骤是原子不可分割的,我们称这样多个步骤的操作为复合操作<br>
- * 故SafeCountingFactorizer 提供AtomicLong类型的计数器，保证read->n+1->write过程的原子性<br>
- * 结论：在某个类中添加一个且仅一个状态时，若该状态为线程安全类，则该类为线程安全的
+ * Created by Dangdang on 2018/7/17.
+ * 无状态的对象一定是线程安全的
+ * <br>
+ * 通常，线程安全性的需求并非来源于对线程的直接使用，而是使用像Servlet这样的框架，该Servlet是无状态的，它既不包含任何域，
+ * 也不包含任何对其他类中域的引用
  */
-public class SafeCountingFactorizer implements Servlet {
-
-    //使用一个线程安全的类，对线程安全类的操作都是线程安全（原子）的
-    //Servlet的状态就是计数器的状态，计数器是线程安全的，故Servlet是安全的
-    private final AtomicLong hitCount = new AtomicLong(0);
+public class StatelessFactorizerServlet implements Servlet {
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -29,10 +26,9 @@ public class SafeCountingFactorizer implements Servlet {
 
     @Override
     public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
+        //局部变量，线程安全
         BigInteger number = extractFromRequest(req);
         BigInteger[] factors = factor(number);
-        //记录命中次数
-        hitCount.incrementAndGet();
         encodeToResponse(res, factors);
     }
 
@@ -85,4 +81,5 @@ public class SafeCountingFactorizer implements Servlet {
             e.printStackTrace();
         }
     }
+
 }

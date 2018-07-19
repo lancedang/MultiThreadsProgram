@@ -1,20 +1,21 @@
-package com.dang.book2.chapter2;
+package com.dang.book2.chapter2.count;
 
 import javax.servlet.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Created by Dangdang on 2018/7/18.
- * 无状态对象中加入一个状态，此类与chapter1中的UnsafeSequence本质是一致的，都是对同一个对象的成员变量进行操作，<br>
- * 主要区别是UnSafeSequence是普通的共享对象，而Servlet属于Java web 框架，在运行时仍是单个Servlet对象处理多个请求<br>
- * n++这种属于典型的竞态条件的一种，即后面的动作取决于前面执行的结果，简言之先检查后执行（check-than-act),但检查-运行中间有时间差<br>
- * 从而给其他动作的插入传告了机会，导致前面结果失效
+ * UnsafeCountingFactorizer 中的计数过程要想正确是需要 read->n+1->write 这3个步骤是原子不可分割的,我们称这样多个步骤的操作为复合操作<br>
+ * 故SafeCountingFactorizer 提供AtomicLong类型的计数器，保证read->n+1->write过程的原子性<br>
+ * 结论：在某个类中添加一个且仅一个状态时，若该状态为线程安全类，则该类为线程安全的
  */
-public class UnsafeCountingFactorizer implements Servlet {
+public class SafeCountingFactorizer implements Servlet {
 
-    private int hitCount;
+    //使用一个线程安全的类，对线程安全类的操作都是线程安全（原子）的
+    //Servlet的状态就是计数器的状态，计数器是线程安全的，故Servlet是安全的
+    private final AtomicLong hitCount = new AtomicLong(0);
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -31,7 +32,7 @@ public class UnsafeCountingFactorizer implements Servlet {
         BigInteger number = extractFromRequest(req);
         BigInteger[] factors = factor(number);
         //记录命中次数
-        hitCount++;
+        hitCount.incrementAndGet();
         encodeToResponse(res, factors);
     }
 

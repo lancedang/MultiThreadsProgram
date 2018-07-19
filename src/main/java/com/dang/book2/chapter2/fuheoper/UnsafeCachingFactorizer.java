@@ -1,10 +1,9 @@
-package com.dang.book2.chapter2;
+package com.dang.book2.chapter2.fuheoper;
 
 import javax.servlet.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
