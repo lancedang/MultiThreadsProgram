@@ -1,4 +1,4 @@
-package com.dang.book2.chapter6;
+package com.dang.book2.chapter6.clientserver.communicate;
 
 import java.io.*;
 import java.net.Socket;
@@ -6,14 +6,18 @@ import java.net.UnknownHostException;
 
 /**
  * Created by Dangdang on 2018/2/18.
+ * web client 模拟发送若干个请求,有具体通信的过程（读写socket stream）
  */
-public class SocketWebClient {
+public class CommunicateSocketWebClient {
 
     public static void main(String[] args) {
         //singleClient("");
         multiClient();
     }
 
+    /**
+     * 发起100个请求
+     */
     public static void multiClient() {
         int i = 100;
         for (int j = 0; j < i; j++) {
@@ -28,24 +32,6 @@ public class SocketWebClient {
     }
 
     public static void singleClient(String name) {
-        Socket socket = null;
-        try {
-            //建立连接，且不做特殊任务，模拟请求执行500ms，然后关闭
-            socket = new Socket("localhost", 8888);
-            Thread.sleep(500);
-            socket.close();
-
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void singleClient2(String name) {
         Socket socket = null;
         try {
             //建立连接
