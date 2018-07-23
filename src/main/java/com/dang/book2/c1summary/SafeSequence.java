@@ -1,4 +1,4 @@
-package com.dang.book2.chapter1;
+package com.dang.book2.c1summary;
 
 public class SafeSequence {
 

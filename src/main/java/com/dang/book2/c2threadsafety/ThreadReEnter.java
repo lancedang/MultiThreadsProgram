@@ -1,4 +1,4 @@
-package com.dang.book2.chapter2;
+package com.dang.book2.c2threadsafety;
 
 /**
  * Created by Dangdang on 2018/7/19.

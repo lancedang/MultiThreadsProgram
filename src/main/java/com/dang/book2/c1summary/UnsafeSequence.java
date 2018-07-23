@@ -1,4 +1,4 @@
-package com.dang.book2.chapter1;
+package com.dang.book2.c1summary;
 
 /**
  * Created by Dangdang on 2018/7/16.

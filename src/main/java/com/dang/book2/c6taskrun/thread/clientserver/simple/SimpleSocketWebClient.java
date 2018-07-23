@@ -1,4 +1,4 @@
-package com.dang.book2.chapter6.clientserver.mulitthreadserver;
+package com.dang.book2.c6taskrun.thread.clientserver.simple;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -6,9 +6,9 @@ import java.net.UnknownHostException;
 
 /**
  * Created by Dangdang on 2018/2/18.
- * web client 模拟发送若干个请求
+ * web client 模拟发送若干个请求，client-server 不做具体通信过程（读写socket stream）
  */
-public class SocketWebClient {
+public class SimpleSocketWebClient {
 
     public static void main(String[] args) {
         //singleClient("");

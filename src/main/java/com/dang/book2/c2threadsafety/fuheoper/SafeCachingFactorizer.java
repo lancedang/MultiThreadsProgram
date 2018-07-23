@@ -1,21 +1,22 @@
-package com.dang.book2.chapter2.count;
+package com.dang.book2.c2threadsafety.fuheoper;
 
 import javax.servlet.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigInteger;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * UnsafeCountingFactorizer 中的计数过程要想正确是需要 read->n+1->write 这3个步骤是原子不可分割的,我们称这样多个步骤的操作为复合操作<br>
- * 故SafeCountingFactorizer 提供AtomicLong类型的计数器，保证read->n+1->write过程的原子性<br>
- * 结论：在某个类中添加一个且仅一个状态时，若该状态为线程安全类，则该类为线程安全的
+ * 该Servlet具备多个状态变量，一个用于记录被分解的number，另一个状态用于缓存因式分解的结果，且每个状态均为线程安全类管理<br>
+ *     但多个线程安全对象的复合操作也不是线程安全，整个复合操作应该保持原子性
  */
-public class SafeCountingFactorizer implements Servlet {
+public class SafeCachingFactorizer implements Servlet {
 
-    //使用一个线程安全的类，对线程安全类的操作都是线程安全（原子）的
-    //Servlet的状态就是计数器的状态，计数器是线程安全的，故Servlet是安全的
-    private final AtomicLong hitCount = new AtomicLong(0);
+    //因为因式分解的数值是BigInteger类型，所以用AtomicReference来封装，否则直接用AtomicLong也可以
+    private AtomicReference<BigInteger> lastNumber;
+
+    //注意泛型参数是数组类型
+    private AtomicReference<BigInteger[]> lastFactorors = new AtomicReference();
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -27,12 +28,26 @@ public class SafeCountingFactorizer implements Servlet {
         return null;
     }
 
+    /**
+     * 用synchronized 内置锁同步某个方法，并发性非常差
+     * @param req
+     * @param res
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
-    public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
+    public synchronized void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
         BigInteger number = extractFromRequest(req);
-        BigInteger[] factors = factor(number);
-        //记录命中次数
-        hitCount.incrementAndGet();
+        BigInteger[] factors = null;
+        //比较方法是equals而不是==
+        if (number.equals(lastNumber.get())) {
+            factors = lastFactorors.get();
+        }else{
+            factors = factor(number);
+            lastNumber.set(number);
+            lastFactorors.set(factors);
+        }
+
         encodeToResponse(res, factors);
     }
 

@@ -1,30 +1,23 @@
-package com.dang.book2.chapter6.clientserver.mulitthreadserver;
+package com.dang.book2.c6taskrun.thread.clientserver.mulitthreadserver;
 
-import javax.jws.soap.SOAPBinding;
-import java.io.*;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketAddress;
 
 /**
  * Created by Dangdang on 2018/2/18.
  */
-public class SingleThreadWebServer {
+public class MultiThreadWebServer {
 
     public static void main(String[] args) {
         try {
-            //定义 Server Socket, Server Socket 将会监听 8888 端口
             ServerSocket serverSocket = new ServerSocket(8888);
 
             while (true) {
-
-                //Server Socket 接收到 请求 8888 端口的连接
                 final Socket socket = serverSocket.accept();
-                //Web Server 每 2s 才能处理一个请求，Client 每 1s 发送一个，后面发送的请求应该得不到响应，现做验证
-                System.out.println("Web Server 接收到请求, 请求来源于 " + socket.hashCode());
 
-                //main主线程处理
-                singleThreadHandle(socket);
+                //每个请求分配一个线程，main折返
+                multiThreadHandle(socket);
             }
 
         } catch (IOException e) {
@@ -32,8 +25,9 @@ public class SingleThreadWebServer {
         }
     }
 
-    public static void singleThreadHandle(Socket socket) {
-        handRequest(socket);
+    public static void multiThreadHandle(Socket socket) {
+        //所谓的多线程就是为每个socket请求的分配一个线程来处理
+        new Thread(() -> handRequest(socket)).start();
     }
 
     /**
@@ -44,6 +38,7 @@ public class SingleThreadWebServer {
      */
     public static void handRequest(Socket socket) {
         try {
+            System.out.println("Web Server 接收到请求, 请求来源于 " + socket.hashCode());
             //不对请求做特殊处理，只是模拟处理时长2s, 然后关闭连接
             Thread.sleep(3000);
             socket.close();

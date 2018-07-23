@@ -1,4 +1,4 @@
-package com.dang.book2.chapter2.fuheoper;
+package com.dang.book2.c2threadsafety.fuheoper;
 
 import javax.servlet.*;
 import java.io.IOException;

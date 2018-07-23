@@ -1,4 +1,4 @@
-package com.dang.book2.chapter6.clientserver.simple;
+package com.dang.book2.c6taskrun.thread.clientserver.simple;
 
 import java.io.*;
 import java.net.ServerSocket;

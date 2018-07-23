@@ -1,4 +1,4 @@
-package com.dang.book2.chapter6.countdownlatch;
+package com.dang.book2.c6taskrun.countdownlatch;
 
 import java.util.concurrent.CountDownLatch;
 

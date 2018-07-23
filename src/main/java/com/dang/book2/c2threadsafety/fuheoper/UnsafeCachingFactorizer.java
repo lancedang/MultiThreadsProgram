@@ -1,4 +1,4 @@
-package com.dang.book2.chapter2.fuheoper;
+package com.dang.book2.c2threadsafety.fuheoper;
 
 import javax.servlet.*;
 import java.io.IOException;
@@ -7,10 +7,9 @@ import java.math.BigInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * 该Servlet具备多个状态变量，一个用于记录被分解的number，另一个状态用于缓存因式分解的结果，且每个状态均为线程安全类管理<br>
- *     但多个线程安全对象的复合操作也不是线程安全，整个复合操作应该保持原子性
+ * 该Servlet具备多个状态变量，一个用于记录被分解的number，另一个状态用于缓存因式分解的结果，且每个状态均为线程安全类管理
  */
-public class SafeCachingFactorizer implements Servlet {
+public class UnsafeCachingFactorizer implements Servlet {
 
     //因为因式分解的数值是BigInteger类型，所以用AtomicReference来封装，否则直接用AtomicLong也可以
     private AtomicReference<BigInteger> lastNumber;
@@ -28,15 +27,8 @@ public class SafeCachingFactorizer implements Servlet {
         return null;
     }
 
-    /**
-     * 用synchronized 内置锁同步某个方法，并发性非常差
-     * @param req
-     * @param res
-     * @throws ServletException
-     * @throws IOException
-     */
     @Override
-    public synchronized void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
+    public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
         BigInteger number = extractFromRequest(req);
         BigInteger[] factors = null;
         //比较方法是equals而不是==
@@ -44,6 +36,12 @@ public class SafeCachingFactorizer implements Servlet {
             factors = lastFactorors.get();
         }else{
             factors = factor(number);
+            //当所要分解值与上次不同时，重新计算并保存结果，
+            // 保存的单个动作如保存number，保存数组都是原子的，但两个原子操作在多线程环境下是可以被分隔的
+            // 但逻辑上需要满足15=3*5，不能15保存好了，但3和5没有保存或保存成其他值
+            //这种同时保存的多个条件具有某种关联，称为"不变性条件",本质是"复合操作的增强版"
+            //除了多个操作需要原子进行外，还要满足多个操作间的不变性
+            //结论：要保证状态一致性需要在某个原子操作中更新所有相关的状态变量
             lastNumber.set(number);
             lastFactorors.set(factors);
         }
