@@ -40,7 +40,7 @@ public class SocketWebClient {
         Socket socket = null;
         try {
             //建立连接，且不做特殊任务，模拟请求执行500ms，然后关闭
-            socket = new Socket("localhost", 8886);
+            socket = new Socket("localhost", 8885);
             Thread.sleep(50);
             socket.close();
 
