@@ -23,7 +23,7 @@ public class TaskExecutorWebServer {
                 Socket socket = serverSocket.accept();
 
                 //lambda 代替匿名函数
-                executor.execute(() -> handleRequest(socket));
+                executor.execute(() -> HandleRequestUtil.handleRequest(socket));
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -31,18 +31,4 @@ public class TaskExecutorWebServer {
         }
     }
 
-    /**
-     * 定义处理 socket 的具体逻辑
-     *
-     * @param socket
-     */
-    private static void handleRequest(Socket socket) {
-        try {
-            System.out.println("线程" + Thread.currentThread().getName() + "开始-处理请求，socket=" + socket.hashCode());
-            Thread.sleep(1000);
-            System.out.println("线程" + Thread.currentThread().getName() + "结束-处理请求，socket=" + socket.hashCode());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 }
