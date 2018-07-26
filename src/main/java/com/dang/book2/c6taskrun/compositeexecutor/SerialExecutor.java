@@ -5,12 +5,17 @@ import java.util.Queue;
 import java.util.concurrent.Executor;
 
 public class SerialExecutor implements Executor {
+    //用于保存任务的队列
     final Queue<Runnable> tasks = new ArrayDeque<Runnable>();
-    final Executor executor;
+
+    //保存Executor执行链的下一个Executor
+    final Executor secondExecutor;
+
+
     Runnable active;
 
-    SerialExecutor(Executor executor) {
-        this.executor = executor;
+    SerialExecutor(Executor secondExecutor) {
+        this.secondExecutor = secondExecutor;
     }
 
     public synchronized void execute(final Runnable r) {
@@ -36,7 +41,7 @@ public class SerialExecutor implements Executor {
      */
     protected synchronized void scheduleNext() {
         if ((active = tasks.poll()) != null) {
-            executor.execute(active);
+            secondExecutor.execute(active);
         }
     }
 }
