@@ -2,8 +2,7 @@ package com.dang.book2.c6taskrun.timer.multitask;
 
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 /**
  * Created by Dangdang on 2018/8/21.
@@ -18,9 +17,9 @@ public class TimerBugDemo {
 
         //twoDelayTask();
 
-        oneLongTimeOnePeriodTask();
+        //oneLongTimeOnePeriodTask();
 
-        //oneNormalOneThrowTask();
+        oneNormalOneThrowTask();
 
         //executorExecuteTask();
 
@@ -83,9 +82,9 @@ public class TimerBugDemo {
         NormalTask normalTask = new NormalTask();
         ThrowTask throwTask = new ThrowTask();
 
-        Executor executor = Executors.newFixedThreadPool(1);
-        executor.execute(normalTask);
-        executor.execute(throwTask);
+        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
+        scheduledExecutorService.schedule(throwTask, 2000, TimeUnit.MICROSECONDS);
+        scheduledExecutorService.schedule(normalTask, 4000, TimeUnit.MILLISECONDS);
 
     }
 
