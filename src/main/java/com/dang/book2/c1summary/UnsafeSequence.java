@@ -8,7 +8,7 @@ package com.dang.book2.c1summary;
  */
 public class UnsafeSequence {
 
-    private int number;
+    private int number = 0;
 
     /**
      * 返回唯一数值，将在多线程环境下运行
@@ -17,6 +17,7 @@ public class UnsafeSequence {
      */
     public int getNext() {
         try {
+            //让另一个线程插入
             Thread.sleep(10L);
         } catch (InterruptedException e) {
 

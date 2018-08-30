@@ -5,7 +5,7 @@ public class SafeSequence {
     private int number;
 
     /**
-     * 返回唯一数值，将在多线程环境下运行
+     * 返回唯一数值，将在多线程环境下运行，用synchronized保证同步
      *
      * @return
      */

@@ -31,12 +31,13 @@ public class SequenceDemo {
 
         //lambda 代替可以代替匿名内部类,也可直接将=右边表达式放到Thread参数中
         Runnable target = () -> {
-            for (int i = 0; i < 50; i++) {
+            for (int i = 0; i < 5; i++) {
                 int next = sequence.getNext();
                 System.out.println(Thread.currentThread().getName() + ":" + next);
             }
         };
 
+        //多线程操作共享变量
         Thread thread1 = new Thread(target);
         Thread thread2 = new Thread(target);
         thread1.start();
@@ -47,12 +48,13 @@ public class SequenceDemo {
         SafeSequence safeSequence = new SafeSequence();
 
         Runnable target2 = () -> {
-            for (int i = 0; i < 50; i++) {
+            for (int i = 0; i < 5; i++) {
                 int next = safeSequence.getNext();
                 System.out.println(Thread.currentThread().getName() + ":" + next);
             }
         };
 
+        //多线程操作共享变量
         Thread thread1 = new Thread(target2);
         Thread thread2 = new Thread(target2);
         thread1.start();
