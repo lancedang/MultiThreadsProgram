@@ -9,8 +9,8 @@ public class SequenceDemo {
 
         SequenceDemo demo = new SequenceDemo();
 
-        //demo.unSafeTest();
-        demo.safeTest();
+        demo.unSafeTest();
+        //demo.safeTest();
 
     }
 
