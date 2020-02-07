@@ -22,9 +22,9 @@ public class CountDownLatchDemo {
         }
 
         try {
+            Set<Map.Entry<Integer, Future>> entries = futureMap.entrySet();
             //最多等待60s，否则超时，中间若被中断或者出现ExecutionException则捕获异常
             if (countDownLatch.await(60, TimeUnit.SECONDS)) {
-                Set<Map.Entry<Integer, Future>> entries = futureMap.entrySet();
                 for (Map.Entry<Integer, Future> entry : entries) {
                     Future future = entry.getValue();
                     Object o = future.get();
@@ -34,9 +34,15 @@ public class CountDownLatchDemo {
             } else {
                 //当任务抛异常（中断或ExecutionException时，不会进入该超时代码块）
                 System.out.println("超时,任务未完成");
+
+                //超时时，停止任务继续执行（此刻，只能停止所有任务的执行）
+                for (Map.Entry<Integer, Future> entry : entries) {
+                    entry.getValue().cancel(true);
+                }
+
             }
         } catch (InterruptedException e) {
-            //在超时前发生中断
+            //在超时前被interrupt或者超时后cancel 发生中断
             System.out.println("线程被中断,任务未完成");
             e.printStackTrace();
         } catch (ExecutionException e) {
